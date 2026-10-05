@@ -1,0 +1,10 @@
+import {chromium} from '../frontend/node_modules/playwright/index.mjs';
+import {fileURLToPath} from 'node:url';
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1});
+await page.goto('http://127.0.0.1:8000');
+await page.getByRole('button',{name:/^Катастрофи/}).click();
+await page.locator('.impact-grid article').first().getByText('81',{exact:true}).waitFor();
+await page.locator('.disaster-region-marker').first().waitFor();
+await page.screenshot({path:fileURLToPath(new URL('../docs/disasters-desktop.png',import.meta.url))});
+await browser.close();

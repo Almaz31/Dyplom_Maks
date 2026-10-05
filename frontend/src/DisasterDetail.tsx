@@ -1,0 +1,6 @@
+import {X,MapPin,CalendarDays,ExternalLink} from 'lucide-react';
+import {format} from './api';
+import {eventDate,type DisasterEvent} from './disasterTypes';
+export default function DisasterDetail({event,regions,onClose}:{event:DisasterEvent;regions:Record<string,string>;onClose:()=>void}){
+ return <article className="disaster-detail"><div className="detail-head"><span className="eyebrow">ПОДІЯ / {event.id}</span><button className="icon-btn" onClick={onClose} aria-label="Закрити картку події"><X size={16}/></button></div><h3>{event.type_label}</h3>{event.name&&<p>{event.name}</p>}<p><CalendarDays size={15}/>{eventDate(event)}</p><p><MapPin size={15}/>{event.location||'Точне місце не вказано'}</p><div className="dataset-tags">{event.regions.map(r=><span className="tag" key={r}>{regions[r]}</span>)}</div><div className="detail-impacts"><span>Загиблі<b>{format(event.deaths)}</b></span><span>Постраждалі<b>{format(event.affected)}</b></span><span>Збитки, USD<b>{format(event.damage_usd)}</b></span></div><small>Координати: {event.latitude!=null?`${event.latitude}, ${event.longitude}`:'не вказано'}. Втрати — за всю подію.</small><a href="https://doc.emdat.be/docs/data-structure-and-content/emdat-public-table/" target="_blank" rel="noreferrer">EM-DAT / CRED <ExternalLink size={12}/></a></article>;
+}

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/disasterdetail.tsx","./src/disasterimport.tsx","./src/disasterspage.tsx","./src/importwizard.tsx","./src/ukrainemap.tsx","./src/api.ts","./src/disastersymbols.tsx","./src/disastertypes.ts","./src/main.tsx","./src/weatherpalette.tsx"],"version":"5.8.3"}

@@ -1,0 +1,12 @@
+import {chromium} from '../frontend/node_modules/playwright/index.mjs';
+import {mkdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1});
+await page.goto('http://127.0.0.1:8000');
+await page.locator('.recharts-surface').first().waitFor();
+await page.waitForFunction(()=>document.querySelectorAll('.leaflet-overlay-pane path').length===27);
+await page.waitForTimeout(500);
+await mkdir(new URL('../docs/',import.meta.url),{recursive:true});
+await page.screenshot({path:fileURLToPath(new URL('../docs/desktop.png',import.meta.url)),fullPage:true});
+await browser.close();

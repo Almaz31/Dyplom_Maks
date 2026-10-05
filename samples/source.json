@@ -1,0 +1,47 @@
+{
+  "source": "Open-Meteo Historical Weather API / ECMWF ERA5",
+  "url": "https://archive-api.open-meteo.com/v1/archive?latitude=49.84%2C50.45%2C46.48%2C49.99%2C48.46%2C44.95&longitude=24.03%2C30.52%2C30.73%2C36.23%2C35.04%2C34.1&start_date=2024-01-01&end_date=2024-12-31&models=era5&daily=temperature_2m_mean%2Cprecipitation_sum%2Crelative_humidity_2m_mean%2Cwind_speed_10m_mean&timezone=GMT&wind_speed_unit=ms",
+  "retrieved_at": "2026-10-01T14:11:37.294131+00:00",
+  "license": "CC BY 4.0",
+  "documentation": "https://open-meteo.com/en/docs/historical-weather-api",
+  "spatial_kind": "Representative grid points near cities, NOT oblast area averages",
+  "timezone": "UTC",
+  "points": [
+    {
+      "region": "UA-46",
+      "city": "Львів",
+      "latitude": 49.84,
+      "longitude": 24.03
+    },
+    {
+      "region": "UA-30",
+      "city": "Київ",
+      "latitude": 50.45,
+      "longitude": 30.52
+    },
+    {
+      "region": "UA-51",
+      "city": "Одеса",
+      "latitude": 46.48,
+      "longitude": 30.73
+    },
+    {
+      "region": "UA-63",
+      "city": "Харків",
+      "latitude": 49.99,
+      "longitude": 36.23
+    },
+    {
+      "region": "UA-12",
+      "city": "Дніпро",
+      "latitude": 48.46,
+      "longitude": 35.04
+    },
+    {
+      "region": "UA-43",
+      "city": "Сімферополь",
+      "latitude": 44.95,
+      "longitude": 34.1
+    }
+  ]
+}

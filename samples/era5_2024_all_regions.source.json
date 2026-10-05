@@ -1,0 +1,190 @@
+{
+  "source": "ECMWF ERA5 via Open-Meteo",
+  "license": "CC BY 4.0",
+  "retrieved_at": "2026-10-02T09:00:31.548676+00:00",
+  "documentation": "https://open-meteo.com/en/docs/historical-weather-api",
+  "timezone": "UTC",
+  "start": "2024-01-01",
+  "end": "2024-12-31",
+  "rows": 9882,
+  "spatial_kind": "point",
+  "note": "Filtered from the 2000–2025 snapshot; representative points, not area means",
+  "points": [
+    {
+      "region": "UA-05",
+      "city": "Вінниця",
+      "latitude": 49.23,
+      "longitude": 28.47
+    },
+    {
+      "region": "UA-07",
+      "city": "Луцьк",
+      "latitude": 50.75,
+      "longitude": 25.34
+    },
+    {
+      "region": "UA-09",
+      "city": "Луганськ",
+      "latitude": 48.57,
+      "longitude": 39.31
+    },
+    {
+      "region": "UA-12",
+      "city": "Дніпро",
+      "latitude": 48.46,
+      "longitude": 35.04
+    },
+    {
+      "region": "UA-14",
+      "city": "Донецьк",
+      "latitude": 48.02,
+      "longitude": 37.8
+    },
+    {
+      "region": "UA-18",
+      "city": "Житомир",
+      "latitude": 50.25,
+      "longitude": 28.66
+    },
+    {
+      "region": "UA-21",
+      "city": "Ужгород",
+      "latitude": 48.62,
+      "longitude": 22.3
+    },
+    {
+      "region": "UA-23",
+      "city": "Запоріжжя",
+      "latitude": 47.84,
+      "longitude": 35.14
+    },
+    {
+      "region": "UA-26",
+      "city": "Івано-Франківськ",
+      "latitude": 48.92,
+      "longitude": 24.71
+    },
+    {
+      "region": "UA-30",
+      "city": "Київ",
+      "latitude": 50.45,
+      "longitude": 30.52
+    },
+    {
+      "region": "UA-32",
+      "city": "Біла Церква",
+      "latitude": 49.8,
+      "longitude": 30.12
+    },
+    {
+      "region": "UA-35",
+      "city": "Кропивницький",
+      "latitude": 48.51,
+      "longitude": 32.26
+    },
+    {
+      "region": "UA-40",
+      "city": "Севастополь",
+      "latitude": 44.62,
+      "longitude": 33.53
+    },
+    {
+      "region": "UA-43",
+      "city": "Сімферополь",
+      "latitude": 44.95,
+      "longitude": 34.1
+    },
+    {
+      "region": "UA-46",
+      "city": "Львів",
+      "latitude": 49.84,
+      "longitude": 24.03
+    },
+    {
+      "region": "UA-48",
+      "city": "Миколаїв",
+      "latitude": 46.97,
+      "longitude": 32.0
+    },
+    {
+      "region": "UA-51",
+      "city": "Одеса",
+      "latitude": 46.48,
+      "longitude": 30.73
+    },
+    {
+      "region": "UA-53",
+      "city": "Полтава",
+      "latitude": 49.59,
+      "longitude": 34.55
+    },
+    {
+      "region": "UA-56",
+      "city": "Рівне",
+      "latitude": 50.62,
+      "longitude": 26.25
+    },
+    {
+      "region": "UA-59",
+      "city": "Суми",
+      "latitude": 50.91,
+      "longitude": 34.8
+    },
+    {
+      "region": "UA-61",
+      "city": "Тернопіль",
+      "latitude": 49.55,
+      "longitude": 25.59
+    },
+    {
+      "region": "UA-63",
+      "city": "Харків",
+      "latitude": 49.99,
+      "longitude": 36.23
+    },
+    {
+      "region": "UA-65",
+      "city": "Херсон",
+      "latitude": 46.64,
+      "longitude": 32.62
+    },
+    {
+      "region": "UA-68",
+      "city": "Хмельницький",
+      "latitude": 49.42,
+      "longitude": 26.99
+    },
+    {
+      "region": "UA-71",
+      "city": "Черкаси",
+      "latitude": 49.44,
+      "longitude": 32.06
+    },
+    {
+      "region": "UA-74",
+      "city": "Чернігів",
+      "latitude": 51.5,
+      "longitude": 31.29
+    },
+    {
+      "region": "UA-77",
+      "city": "Чернівці",
+      "latitude": 48.29,
+      "longitude": 25.94
+    }
+  ],
+  "requests": [
+    {
+      "url": "https://archive-api.open-meteo.com/v1/archive?latitude=49.23%2C50.75%2C48.57%2C48.46%2C48.02%2C50.25%2C48.62%2C47.84%2C48.92&longitude=28.47%2C25.34%2C39.31%2C35.04%2C37.8%2C28.66%2C22.3%2C35.14%2C24.71&start_date=2000-01-01&end_date=2025-12-31&models=era5&daily=temperature_2m_mean%2Cprecipitation_sum%2Crelative_humidity_2m_mean%2Cwind_speed_10m_mean&timezone=GMT&wind_speed_unit=ms",
+      "raw_file": "samples\\weather_raw\\e379ed259afe545229e37d673412f26bca998958ada62789751913a9ae8d0b62.json"
+    },
+    {
+      "url": "https://archive-api.open-meteo.com/v1/archive?latitude=50.45%2C49.8%2C48.51%2C44.62%2C44.95%2C49.84%2C46.97%2C46.48%2C49.59&longitude=30.52%2C30.12%2C32.26%2C33.53%2C34.1%2C24.03%2C32.0%2C30.73%2C34.55&start_date=2000-01-01&end_date=2025-12-31&models=era5&daily=temperature_2m_mean%2Cprecipitation_sum%2Crelative_humidity_2m_mean%2Cwind_speed_10m_mean&timezone=GMT&wind_speed_unit=ms",
+      "raw_file": "samples\\weather_raw\\e055cf9576d58de352885e1e2db918a3f40d996213bb2809735cd8100a5abe30.json"
+    },
+    {
+      "url": "https://archive-api.open-meteo.com/v1/archive?latitude=50.62%2C50.91%2C49.55%2C49.99%2C46.64%2C49.42%2C49.44%2C51.5%2C48.29&longitude=26.25%2C34.8%2C25.59%2C36.23%2C32.62%2C26.99%2C32.06%2C31.29%2C25.94&start_date=2000-01-01&end_date=2025-12-31&models=era5&daily=temperature_2m_mean%2Cprecipitation_sum%2Crelative_humidity_2m_mean%2Cwind_speed_10m_mean&timezone=GMT&wind_speed_unit=ms",
+      "raw_file": "samples\\weather_raw\\1dc74dcb63cfb6fdbdc2126e17941a5351724bef3c57389fa746b688d9c4f418.json"
+    }
+  ]
+}
