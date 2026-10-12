@@ -25,7 +25,7 @@ test('full weather coverage for all 27 territories',async({page})=>{
 test('real EM-DAT Excel import, metrics, filters, timeline and export',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');await page.getByRole('button',{name:'EM-DAT Excel',exact:true}).click();
- await page.locator('input[type=file]').setInputFiles(path.resolve('../../public_emdat_custom_request_2026-09-29_c15f18a1-0997-403a-9ce3-b733ae1bf60c.xlsx'));
+ await page.locator('input[type=file]').setInputFiles(path.resolve(import.meta.dirname,'../../Docs_for_info/public_emdat_custom_request_2026-09-29_c15f18a1-0997-403a-9ce3-b733ae1bf60c.xlsx'));
  await expect(page.getByText('Файл перевірено',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Імпортувати катастрофи',exact:true}).click();
  await expect(page.locator('.impact-grid article').first()).toContainText('81');

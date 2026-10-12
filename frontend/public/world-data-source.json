@@ -1,0 +1,28 @@
+{
+  "retrieved": "2026-10-12",
+  "temperature": {
+    "name": "NASA GISS GISTEMP v4 Land-Ocean Temperature Index",
+    "file": "gistemp.csv",
+    "url": "https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv",
+    "documentation": "https://data.giss.nasa.gov/gistemp/",
+    "reference": "Lenssen et al. (2024), doi:10.1029/2023JD040179",
+    "unit": "degrees Celsius relative to 1951–1980",
+    "analysis": "Complete calendar years only, using the J-D column. This is a local snapshot, not a live feed."
+  },
+  "countries": {
+    "name": "Natural Earth 1:110m admin 0 countries",
+    "file": "world-countries.geojson",
+    "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson",
+    "license": "public domain",
+    "retrieved": "2026-10-12",
+    "processing": "Compact Ukrainian country names; clockwise spherical rings. Crimea attributed to Ukraine consistently with the existing Ukraine map. Rebuild using scripts/fetch_world_countries.py (shapely required only for asset preparation).",
+    "usage": "Country outlines and point-in-country identification on the globe; generalized 1:110m coastlines."
+  },
+  "geography": {
+    "name": "Natural Earth 1:110m land",
+    "file": "world-land.geojson",
+    "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson",
+    "license": "public domain",
+    "usage": "Geographical illustration only; no country-level climate measurements are inferred."
+  }
+}
