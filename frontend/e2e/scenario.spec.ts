@@ -19,7 +19,7 @@ test('CSV → validation → map → timeline → calculation → download',asyn
  await expect(page.locator('.map-date')).toContainText('2024-02');
  await page.getByLabel('Область',{exact:true}).selectOption('UA-51');
  await expect(page.locator('.main-stat strong')).toContainText('30');
- const downloading=page.waitForEvent('download');await page.getByRole('link',{name:'Скачати вибірку CSV'}).click();
+ const downloading=page.waitForEvent('download');await page.getByRole('link',{name:'Експорт CSV',exact:true}).click();
  const file=await downloading;expect(file.suggestedFilename()).toBe('weather-selection.csv');
  await page.reload();await page.getByRole('button',{name:'Дослідження',exact:true}).click();await expect(page.getByLabel('Активний датасет')).toContainText('browser-smoke');
  await page.getByLabel('Область',{exact:true}).selectOption('UA-07');

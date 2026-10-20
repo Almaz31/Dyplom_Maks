@@ -29,7 +29,9 @@ test('real EM-DAT Excel import, metrics, filters, timeline and export',async({pa
  await expect(page.getByText('Файл перевірено',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Імпортувати катастрофи',exact:true}).click();
  await expect(page.locator('.impact-grid article').first()).toContainText('81');
- await expect(page.locator('.events-table-panel tbody tr')).toHaveCount(81);
+ await page.getByLabel('Рядків на сторінці').selectOption('25');
+ await expect(page.locator('.events-table-panel tbody tr')).toHaveCount(25);
+ await expect(page.locator('.pagination-summary')).toHaveText('1–25 із 81 записів');
  await expect(page.locator('.disaster-region-marker')).not.toHaveCount(0);
  await page.getByLabel('Тип катастрофи',{exact:true}).selectOption('Flood');
  await expect(page.locator('.impact-grid article').first()).toContainText('12');

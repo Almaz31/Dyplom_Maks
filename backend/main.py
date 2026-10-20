@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 from .regions import REGIONS, region_code
 from .disasters import create_router
 from .world import create_world_router
+from .prediction import create_prediction_router
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.environ.get('CLIMATE_DATA_DIR', ROOT / 'data'))
@@ -50,6 +51,7 @@ with connect() as con:
 app = FastAPI(title='Обрій · локальна кліматична лабораторія', version='0.1.0')
 app.include_router(create_router(connect, DATA))
 app.include_router(create_world_router(DATA))
+app.include_router(create_prediction_router())
 
 class ImportConfig(BaseModel):
     name: str = Field(min_length=1, max_length=160)

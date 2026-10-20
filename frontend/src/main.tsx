@@ -4,4 +4,5 @@ import App from './App';
 import 'leaflet/dist/leaflet.css';
 import './style.css';
 import './disasters.css';
+import './polish.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
