@@ -2,8 +2,8 @@ import {test,expect} from '@playwright/test';
 
 test('country names and highlights follow cities and clicks on the globe',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await expect(page.locator('.globe-country-badge')).toHaveText('Україна');
  await expect(page.locator('.globe-view')).toHaveAttribute('data-country','UKR');
  await page.getByLabel('Місто світу').selectOption('3');

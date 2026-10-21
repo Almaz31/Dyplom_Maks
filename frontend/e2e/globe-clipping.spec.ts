@@ -6,8 +6,8 @@ test('land crossing the horizon fills the visible cap and leaves the ocean clear
  await page.route('**/world-land.geojson',route=>route.fulfill({json:{type:'FeatureCollection',features:[{
   type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[[[65,-25],[65,25],[145,25],[145,-25],[65,-25]]]}
  }]}}));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await page.getByLabel('Показник світової погоди').selectOption('anomaly');
  const canvas=page.locator('canvas');await expect(canvas).toBeVisible();
  const sample=()=>canvas.evaluate(el=>{

@@ -2,17 +2,17 @@ import {test,expect} from '@playwright/test';
 
 test('header opens compact 2018-trained forecasts and loads selected histories on demand',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');
- await expect(page.locator('header').getByRole('button',{name:'Передбачення',exact:true})).toBeVisible();
+ await page.goto('/?page=analytics&a_view=forecast');
+ await expect(page.getByRole('button',{name:'Прогноз на карті Європи',exact:true})).toBeVisible();
  await expect(page.locator('.page-actions').getByRole('button',{name:'Передбачення',exact:true})).toHaveCount(0);
  let requests=0;page.on('request',r=>{if(r.url().endsWith('/api/world/prediction'))requests++;});
- await page.locator('header').getByRole('button',{name:'Передбачення',exact:true}).click();
+ await page.getByRole('button',{name:'Прогноз на карті Європи',exact:true}).click();
  const dialog=page.getByRole('dialog');
- await expect(dialog.getByRole('button',{name:'Почати магію',exact:true})).toBeVisible();
+ await expect(dialog.getByRole('button',{name:'Розрахувати прогноз',exact:true})).toBeVisible();
  await expect(dialog.locator('.prediction-values article')).toHaveCount(0);expect(requests).toBe(0);
  await page.route('**/api/world/prediction',async route=>{await new Promise(resolve=>setTimeout(resolve,350));await route.continue();});
  const response=page.waitForResponse(r=>r.url().endsWith('/api/world/prediction'));
- await dialog.getByRole('button',{name:'Почати магію',exact:true}).click();
+ await dialog.getByRole('button',{name:'Розрахувати прогноз',exact:true}).click();
  await expect(dialog.locator('.prediction-spinner')).toBeVisible();
  await expect(dialog.getByRole('button',{name:'Передбачаємо…'})).toBeDisabled();
  const firstResponse=await response;
@@ -41,14 +41,14 @@ test('header opens compact 2018-trained forecasts and loads selected histories o
  expect((await download).suggestedFilename()).toBe('europe-prediction-2026-precipitation.csv');
  await dialog.getByLabel('Місяць передбачення').selectOption('1');
  await expect(dialog.locator('.prediction-values article')).toHaveCount(0);
- await dialog.getByRole('button',{name:'Почати магію',exact:true}).click();
+ await dialog.getByRole('button',{name:'Розрахувати прогноз',exact:true}).click();
  await expect(dialog.locator('.prediction-values article')).toHaveCount(4);
  await expect(dialog.locator('.prediction-point')).toHaveCount(56);
  await dialog.locator('.prediction-point').first().click();
  await expect(dialog.getByLabel('Точка передбачення')).not.toHaveValue('region');
  await dialog.getByLabel('Рік передбачення').selectOption('2027');
  await expect(dialog.locator('.prediction-values article')).toHaveCount(0);
- await dialog.getByRole('button',{name:'Почати магію',exact:true}).click();
+ await dialog.getByRole('button',{name:'Розрахувати прогноз',exact:true}).click();
  await expect(dialog.locator('.prediction-values article')).toHaveCount(4);
  await page.screenshot({path:'test-results/prediction-desktop.png',fullPage:true});
  await dialog.getByRole('button',{name:'Закрити передбачення'}).click();
@@ -56,10 +56,10 @@ test('header opens compact 2018-trained forecasts and loads selected histories o
 });
 
 test('header prediction fits mobile and closes with Escape',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');
- await expect(page.locator('header').getByRole('button',{name:'Передбачення',exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Передбачення',exact:true}).click();
- await page.getByRole('button',{name:'Почати магію',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await page.goto('/?page=analytics&a_view=forecast');
+ await expect(page.getByRole('button',{name:'Прогноз на карті Європи',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Прогноз на карті Європи',exact:true}).click();
+ await page.getByRole('button',{name:'Розрахувати прогноз',exact:true}).click();
  await expect(page.locator('.prediction-values article')).toHaveCount(4);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  expect(await page.locator('.prediction-modal').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBeTruthy();

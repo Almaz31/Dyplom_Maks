@@ -1,0 +1,101 @@
+{
+  "selection": {
+    "source": "nasa",
+    "location": "country:UKR",
+    "start": "2000-01",
+    "end": "2025-12",
+    "metric": "temperature",
+    "baseline_start": 1991,
+    "baseline_end": 2020,
+    "variables": [
+      "temperature",
+      "precipitation"
+    ],
+    "transform": "deseasonalized"
+  },
+  "metadata": {
+    "source": "NASA POWER / MERRA-2",
+    "location": "Україна",
+    "spatial_kind": "Індекс сітки країни",
+    "source_url": "https://power.larc.nasa.gov/",
+    "retrieved_at": "2026-10-14T08:15:13.562215+00:00",
+    "note": "Місячні оцінки реаналізу; індекс країни зважено за cos(широти), це не точний середній показник адміністративного полігона. Додаткові місяці — з окремого фактичного знімка; не прогноз."
+  },
+  "quality": {
+    "months": 312,
+    "complete": 312,
+    "available_start": "1981-01",
+    "available_end": "2026-08"
+  },
+  "baseline": {
+    "start": 1991,
+    "end": 2020,
+    "standard_30_year": true,
+    "expected": 30
+  },
+  "descriptive": {
+    "count": 312,
+    "mean": 9.081504843997394,
+    "median": 8.89377750353993,
+    "sd": 9.810967961158298,
+    "min": -10.46373532639028,
+    "max": 25.10415057563156,
+    "q1": 0.330705570920889,
+    "q3": 18.30935500607456,
+    "outliers": 0
+  },
+  "annual_trend": {
+    "n": 26,
+    "slope": 0.0761515488621051,
+    "intercept": -144.11288667938544,
+    "r2": 0.5289081473370247,
+    "pearson": 0.7272607148313628
+  },
+  "annual_change": 1.4792882858494387,
+  "first_anomaly": {
+    "date": "2000-01",
+    "key": 1,
+    "year": 2000,
+    "value": -7.183642369309958,
+    "normal": -5.084180351294901,
+    "baseline_count": 30,
+    "anomaly": -2.099462018015057,
+    "precipitation_pct": null,
+    "z": -0.814438788157586,
+    "rolling": 8.65524811887381,
+    "yoy": -3.5385660960051992
+  },
+  "correlation": {
+    "x": "temperature",
+    "y": "precipitation",
+    "n": 312,
+    "slope": -1.5391377626310199,
+    "intercept": -1.4575697537890928e-15,
+    "r2": 0.02452483295952562,
+    "pearson": -0.15660406431355994,
+    "spearman": -0.16968230499763326
+  },
+  "forecast": {
+    "training_start": "2000-01",
+    "training_end": "2023-12",
+    "test_start": "2024-01",
+    "test_end": "2025-12",
+    "accuracy": {
+      "mae": 1.6486150370227013,
+      "rmse": 1.9821495140638574,
+      "n": 24
+    },
+    "seasonal_naive": {
+      "mae": 1.6916755891709585,
+      "rmse": 2.015406854373824,
+      "n": 24
+    },
+    "first_forecast": {
+      "date": "2026-01",
+      "predicted": -2.055979368787007,
+      "low": -7.257847532931509,
+      "high": 2.4203479130592873,
+      "calibration_n": 21
+    }
+  }
+}

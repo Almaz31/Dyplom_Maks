@@ -12,4 +12,4 @@ export async function api<T>(path:string, options:RequestInit = {}):Promise<T> {
 }
 export const post = (data:unknown):RequestInit => ({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
 export function downloadBlob(blob:Blob,name:string) { const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000); }
-export const format = (n:number|null|undefined) => n == null ? '—' : new Intl.NumberFormat('uk-UA',{maximumFractionDigits:1}).format(n);
+export const format = (n:number|null|undefined) => n == null || !Number.isFinite(n) ? '—' : new Intl.NumberFormat('uk-UA',{maximumFractionDigits:1}).format(n);

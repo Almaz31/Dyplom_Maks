@@ -2,8 +2,8 @@ import {test,expect} from '@playwright/test';
 
 test('world weather switches all four measurements and locations',async({page,request})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await expect(page.getByRole('button',{name:'Світ',exact:true})).toHaveAttribute('aria-pressed','true');
  await page.getByLabel('Місто світу').selectOption('3');
  const raw=await (await request.get('/api/world/weather?latitude=35.68&longitude=139.69')).json();
@@ -31,7 +31,7 @@ test('world weather switches all four measurements and locations',async({page,re
 
 test('world disasters filter the globe and open event details',async({page,request})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Катастрофи світу',exact:true})).toBeVisible();
  await page.getByLabel('Країна світових катастроф').selectOption('USA');
  await page.getByLabel('Тип світових катастроф').selectOption('flood');
@@ -44,17 +44,17 @@ test('world disasters filter the globe and open event details',async({page,reque
  await page.mouse.click(box.x+box.width/2,box.y+box.height/2);
  await expect(page.locator('.world-event-detail')).toContainText('United States');
  await page.screenshot({path:'test-results/world-disasters.png',fullPage:true});
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await expect(page.getByLabel('Показник світової погоди')).toBeVisible();
  await expect(page.getByRole('button',{name:'Світ',exact:true})).toHaveAttribute('aria-pressed','true');
  expect(errors).toEqual([]);
 });
 
 test('world weather and disasters have no horizontal overflow on mobile',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Типи світових катастроф'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await page.getByLabel('Показник світової погоди').selectOption('humidity');
  await expect(page.getByRole('heading',{name:'Вологість · добові значення'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();

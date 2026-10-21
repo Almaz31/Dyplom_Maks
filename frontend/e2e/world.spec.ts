@@ -2,10 +2,10 @@ import {test,expect} from '@playwright/test';
 
 test('world scope loads real data, filters years and rotates the globe',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await page.getByLabel('Показник світової погоди').selectOption('anomaly');
- await expect(page.getByRole('heading',{name:'Світова аналітика'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Світова погода'})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Статистичний аналіз'})).toBeVisible();
  await page.getByLabel('Початковий рік світу').selectOption('1880');
  await page.getByLabel('Кінцевий рік світу').selectOption('1880');
@@ -20,14 +20,15 @@ test('world scope loads real data, filters years and rotates the globe',async({p
  await page.screenshot({path:'test-results/world-desktop.png',fullPage:true});
  await page.getByRole('button',{name:'Україна',exact:true}).click();await expect(canvas).toHaveCount(0);
  await page.getByRole('button',{name:/^Катастрофи/}).click();
+ await page.getByRole('button',{name:'Статистика',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Структура катастроф за типом'})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Сезонність початку катастроф'})).toBeVisible();
  expect(errors).toEqual([]);
 });
 
 test('world analytics fit a mobile viewport',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await page.getByLabel('Показник світової погоди').selectOption('anomaly');
  await expect(page.getByRole('heading',{name:'Статистичний аналіз'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();

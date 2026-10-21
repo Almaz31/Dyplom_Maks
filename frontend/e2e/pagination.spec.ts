@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 
 test('Ukraine event pagination changes rows and resets after filters and timeline',async({page})=>{
- await page.goto('/');const table=page.locator('.events-table-panel');
+ await page.goto('/?page=disasters');const table=page.locator('.events-table-panel');
  await expect(table.locator('tbody tr')).toHaveCount(10);
  const first=await table.locator('tbody tr').first().textContent();
  await table.getByRole('button',{name:'Наступна сторінка'}).click();
@@ -28,7 +28,7 @@ test('Ukraine event pagination changes rows and resets after filters and timelin
 });
 
 test('world event pagination keeps map totals and fits mobile',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
  const table=page.locator('.events-table-panel');await expect(table.locator('tbody tr')).toHaveCount(10);
  const count=await page.locator('.world-latest strong').textContent();
  await table.getByRole('button',{name:'Наступна сторінка'}).click();

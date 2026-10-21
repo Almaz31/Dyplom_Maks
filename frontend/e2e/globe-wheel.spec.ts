@@ -2,8 +2,8 @@ import {test,expect} from '@playwright/test';
 
 test('wheel zoom stays inside the globe, including at the zoom limit',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'Світ',exact:true}).click();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');await page.getByRole('button',{name:'Світ',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  await page.getByLabel('Показник світової погоди').selectOption('anomaly');
  await expect(page.getByRole('heading',{name:'Статистичний аналіз'})).toBeVisible();
  const canvas=page.locator('canvas');await canvas.scrollIntoViewIfNeeded();

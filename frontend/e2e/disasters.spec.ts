@@ -3,10 +3,10 @@ import path from 'node:path';
 
 test('full weather coverage for all 27 territories',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');
- await expect(page.locator('.topbar nav button').first()).toContainText('Катастрофи');
+ await page.goto('/?page=disasters');
+ await expect(page.locator('.topbar nav button').first()).toContainText('Головна');
  await expect(page.locator('.disasters-page')).toBeVisible();
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  const select=page.getByLabel('Активний датасет');
  await expect(select).toContainText('ERA5 · усі області · 2000–2025');
  await select.selectOption({label:'ERA5 · усі області · 2000–2025'});
@@ -24,7 +24,7 @@ test('full weather coverage for all 27 territories',async({page})=>{
 
 test('real EM-DAT Excel import, metrics, filters, timeline and export',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await page.getByRole('button',{name:'EM-DAT Excel',exact:true}).click();
+ await page.goto('/?page=datasets');await page.getByRole('button',{name:'EM-DAT Excel',exact:true}).click();
  await page.locator('input[type=file]').setInputFiles(path.resolve(import.meta.dirname,'../../Docs_for_info/public_emdat_custom_request_2026-09-29_c15f18a1-0997-403a-9ce3-b733ae1bf60c.xlsx'));
  await expect(page.getByText('Файл перевірено',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Імпортувати катастрофи',exact:true}).click();
@@ -32,7 +32,7 @@ test('real EM-DAT Excel import, metrics, filters, timeline and export',async({pa
  await page.getByLabel('Рядків на сторінці').selectOption('25');
  await expect(page.locator('.events-table-panel tbody tr')).toHaveCount(25);
  await expect(page.locator('.pagination-summary')).toHaveText('1–25 із 81 записів');
- await expect(page.locator('.disaster-region-marker')).not.toHaveCount(0);
+ await expect(page.locator('.disaster-region-marker')).toHaveCount(0);
  await page.getByLabel('Тип катастрофи',{exact:true}).selectOption('Flood');
  await expect(page.locator('.impact-grid article').first()).toContainText('12');
  await expect(page.locator('.events-table-panel tbody tr')).toHaveCount(12);
@@ -44,6 +44,7 @@ test('real EM-DAT Excel import, metrics, filters, timeline and export',async({pa
  await expect(legend).toContainText('Повінь');
  await expect(legend.locator('b')).toHaveText('1');
  const symbol=page.locator('.disaster-type-marker [data-disaster-type="Flood"]').first();
+ await page.getByLabel('Територія катастроф',{exact:true}).selectOption('UA-51');
  await expect(symbol).toBeVisible();
  expect(await symbol.locator('path').getAttribute('d')).toBe(await legend.locator('path').getAttribute('d'));
  await page.locator('.events-table-panel').getByRole('button',{name:'Повінь',exact:true}).click();
@@ -54,6 +55,7 @@ test('real EM-DAT Excel import, metrics, filters, timeline and export',async({pa
  await page.getByRole('link',{name:'Експорт періоду CSV',exact:true}).click();
  expect((await downloadPromise).suggestedFilename()).toBe('disasters-selection.csv');
  await page.getByRole('button',{name:'Усі роки',exact:true}).click();
+ await page.getByLabel('Територія катастроф',{exact:true}).selectOption('all');
  await expect(legend.locator('b')).toHaveText('12');
  await page.getByLabel('Тип катастрофи',{exact:true}).selectOption('');
  await page.getByLabel('Територія катастроф',{exact:true}).selectOption('UA-46');
@@ -62,7 +64,7 @@ test('real EM-DAT Excel import, metrics, filters, timeline and export',async({pa
 });
 
 test('disaster map and metrics fit mobile',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await page.setViewportSize({width:390,height:844});await page.goto('/?page=disasters');
  await page.getByRole('button',{name:/^Катастрофи/}).click();
  await expect(page.locator('.impact-grid article').first()).toContainText('81');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();

@@ -20,6 +20,29 @@ TYPE_LABELS = {'flood': 'Повінь', 'storm': 'Шторм', 'earthquake': 'З
                'extreme temperature': 'Екстремальна температура', 'mass movement (dry)': 'Сухий зсув'}
 
 
+def validate_weather(raw, start, end):
+    """Validate cached and network responses identically; null stays null."""
+    daily = raw.get('daily', {}) if isinstance(raw, dict) else {}
+    days = daily.get('time', [])
+    expected = [(start+timedelta(days=i)).isoformat() for i in range((end-start).days+1)]
+    if days != expected or any(not isinstance(daily.get(field), list) or len(daily[field]) != len(days) for field in FIELDS.values()):
+        raise HTTPException(502, 'Джерело повернуло некоректні дати або неповну структуру погодних даних')
+    for key in ('latitude', 'longitude'):
+        value = raw.get(key)
+        limit = 90 if key == 'latitude' else 180
+        if not isinstance(value, (float, int)) or isinstance(value, bool) or not math.isfinite(value) or not -limit <= value <= limit:
+            raise HTTPException(502, 'Некоректні координати сітки у відповіді джерела')
+    for metric, field in FIELDS.items():
+        for value in daily[field]:
+            if value is None:
+                continue
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value):
+                raise HTTPException(502, 'Нечислове значення у погодних даних')
+            if (metric == 'humidity' and not 0 <= value <= 100) or (metric in ('precipitation', 'wind') and value < 0) or (metric == 'temperature' and value < -273.15):
+                raise HTTPException(502, 'Значення джерела поза фізичним діапазоном')
+    return raw
+
+
 @lru_cache(maxsize=1)
 def gdis_events():
     path = ROOT / 'samples/gdis/original.csv'
@@ -40,9 +63,14 @@ def gdis_events():
 
 
 def create_world_router(data):
+    from .world_grid import weather_grid
     router = APIRouter(prefix='/api/world')
     cache = data / 'world_weather'
     cache.mkdir(exist_ok=True)
+
+    @router.get('/weather-grid')
+    def global_weather_grid(start: date = date(2024, 1, 1), end: date = date(2024, 12, 31)):
+        return weather_grid(start, end, data / 'world_weather_grid')
 
     @router.get('/weather-reference')
     def weather_reference(start: date = date(2024, 1, 1), end: date = date(2024, 12, 31)):
@@ -110,11 +138,9 @@ def create_world_router(data):
                         raw = json.load(response)
                 except Exception as exc:
                     raise HTTPException(502, 'Не вдалося отримати ERA5. Спробуйте знову або виберіть місто за 2024 рік.') from exc
-            daily = raw.get('daily', {})
-            days = daily.get('time', [])
-            if not days or any(len(daily.get(field, [])) != len(days) for field in FIELDS.values()):
-                raise HTTPException(502, 'Джерело повернуло неповну структуру погодних даних')
+            validate_weather(raw, start, end)
             path.write_text(json.dumps(raw), encoding='utf-8')
+        validate_weather(raw, start, end)
         daily = raw['daily']
         series = [{'date': day, **{key: daily[field][i] for key, field in FIELDS.items()}}
                   for i, day in enumerate(daily['time'])]

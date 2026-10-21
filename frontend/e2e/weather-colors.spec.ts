@@ -7,8 +7,8 @@ test('weather values use the color scale and retain it across timeline frames',a
   'UA-07':{value:10,coverage:100},
   'UA-40':{value:35,coverage:100},
  }}));
- await page.goto('/');
- await page.getByRole('button',{name:'Дослідження',exact:true}).click();
+ await page.goto('/?page=disasters');
+ await page.getByRole('button',{name:'Погода',exact:true}).click();
  const legend=page.getByLabel('Погодна колірна шкала');
  await expect(legend).toHaveAttribute('data-metric','temperature');
  await expect(legend).toContainText('°C');

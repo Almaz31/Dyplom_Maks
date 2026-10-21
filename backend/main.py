@@ -19,6 +19,7 @@ from .regions import REGIONS, region_code
 from .disasters import create_router
 from .world import create_world_router
 from .prediction import create_prediction_router
+from .analytics_api import create_analytics_router
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.environ.get('CLIMATE_DATA_DIR', ROOT / 'data'))
@@ -52,6 +53,7 @@ app = FastAPI(title='Обрій · локальна кліматична лаб�
 app.include_router(create_router(connect, DATA))
 app.include_router(create_world_router(DATA))
 app.include_router(create_prediction_router())
+app.include_router(create_analytics_router(connect))
 
 class ImportConfig(BaseModel):
     name: str = Field(min_length=1, max_length=160)
