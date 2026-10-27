@@ -112,7 +112,9 @@ test("forecast is explicit, validates historical test block, exports calculated 
     page.getByRole("heading", { name: "Часове розділення даних" }),
   ).toBeVisible();
   await expect(page.getByText(/2024-01 — 2025-12/).first()).toBeVisible();
-  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(12);
+  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(10);
+  await page.locator(".pagination nav button").last().click();
+  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(2);
   const response = page.waitForResponse((r) =>
     r.url().includes("/analytics/export/xlsx?view=forecast"),
   );
@@ -139,7 +141,9 @@ test("comparison and real natural hazard indicator, no unsupported risk claims",
   await expect(
     page.getByText(/Історичний індикатор небезпеки, не повний ризик/),
   ).toBeVisible();
-  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(27);
+  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(10);
+  await page.locator(".pagination nav button").last().click();
+  await expect(page.locator(".analysis-table tbody tr")).toHaveCount(10);
 });
 
 test("mobile and tablet analytical layouts, API errors do not leave stale charts", async ({

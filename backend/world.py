@@ -101,10 +101,15 @@ def create_world_router(data):
         all_events = gdis_events()
         selected = [e for e in all_events if start <= e['year'] <= end
                     and (not country or e['iso'] == country) and (not event_type or e['type'] == event_type)]
+        country_names = {}
+        for event in all_events:
+            country_names.setdefault(event['iso'], Counter())[event['country']] += 1
+        countries = [{'iso': iso, 'name': names.most_common(1)[0][0]}
+                     for iso, names in country_names.items()]
         counts = Counter(e['year'] for e in selected)
         types = Counter(e['type'] for e in selected)
         return {'events': selected, 'count': len(selected), 'locations': sum(len(e['locations']) for e in selected),
-                'countries': [{'iso': iso, 'name': name} for iso, name in sorted({(e['iso'], e['country']) for e in all_events}, key=lambda v: v[1])],
+                'countries': sorted(countries, key=lambda c: c['name']),
                 'types': [{'type': t, 'label': TYPE_LABELS.get(t, t)} for t in sorted({e['type'] for e in all_events})],
                 'type_counts': [{'label': TYPE_LABELS.get(t, t), 'count': n} for t, n in types.most_common()],
                 'series': [{'year': y, 'count': counts[y]} for y in range(start, end + 1)],

@@ -11,6 +11,8 @@ def test_world_disasters_count_events_once_and_filter_country_type_year():
     response = client.get('/api/world/disasters', params={'start': 2018, 'end': 2018, 'country': 'USA', 'event_type': 'flood'})
     assert response.status_code == 200
     result = response.json()
+    assert len({c['iso'] for c in result['countries']}) == len(result['countries'])
+    assert {c['iso'] for c in result['countries']} == {e['iso'] for e in all_events}
     assert result['count'] == len(expected) > 0
     assert result['locations'] == sum(len(e['locations']) for e in expected)
     assert result['series'] == [{'year': 2018, 'count': len(expected)}]

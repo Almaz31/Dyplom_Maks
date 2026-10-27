@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   geoContains,
+  geoCentroid,
   geoDistance,
   geoGraticule10,
   geoOrthographic,
@@ -9,6 +10,8 @@ import {
 } from "d3-geo";
 import type { FeatureCollection, Polygon, MultiPolygon } from "geojson";
 import { fieldTexture, projectField, type GlobeField } from "./globeField";
+import TerritorySearch from "./TerritorySearch";
+
 type Land = FeatureCollection<Polygon | MultiPolygon>;
 type Countries = FeatureCollection<
   Polygon | MultiPolygon,
@@ -280,6 +283,21 @@ export default function Globe({
       data-country={selectedCountry?.properties.id || ""}
       data-field={field?.metric || ""}
     >
+      <TerritorySearch
+        label="Пошук країни на глобусі"
+        options={Array.from(new Map((countries?.features || []).map(f => [f.properties.id, {id: f.properties.id, name: f.properties.name}])).values()).sort((a,b)=>a.name.localeCompare(b.name, "uk"))}
+        value={selectedCountry?.properties.id || ""}
+        onChange={id => {
+          const feature = countries?.features.find(f => f.properties.id === id);
+          if (!feature) return;
+          const [lon, lat] = geoCentroid(feature);
+          rotation.current.lon = lon;
+          rotation.current.lat = lat;
+          setSelectedPoint({lat, lon});
+          setAuto(false);
+          onSelect?.(lat, lon);
+        }}
+      />
       <canvas
         ref={canvas}
         aria-label="3D Земля: перетягніть для обертання, стрілки для повороту, + та − для масштабу"

@@ -3545,3 +3545,6 @@ th {
   color: var(--muted);
   cursor: default;
 }
+
+.globe-view > .territory-search { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 5; max-width: 360px; }
+.disaster-filters .territory-search { min-width: 220px; }

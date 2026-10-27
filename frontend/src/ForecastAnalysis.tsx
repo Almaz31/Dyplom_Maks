@@ -1,3 +1,4 @@
+import Pagination, { usePagination } from "./Pagination";
 import {
   Area,
   Bar,
@@ -28,6 +29,7 @@ export default function ForecastAnalysis({ data }: { data: Forecast }) {
   ];
   const better = data.accuracy.mae < data.baseline_accuracy.mae;
   const note = `Навчання для перевірки: ${data.training_start} — ${data.training_end}. Контрольний період: ${data.test_start} — ${data.test_end}; його значення не використовуються під час прогнозування цього блоку. MAE: ${format(data.accuracy.mae)} ${data.unit}; сезонний наївний метод: ${format(data.baseline_accuracy.mae)} ${data.unit}. Обрана модель ${better ? "має меншу" : "не має меншої"} MAE на цьому інтервалі.`;
+  const pagination = usePagination(data.future, JSON.stringify(data));
   return (
     <>
       <Summary
@@ -177,7 +179,7 @@ export default function ForecastAnalysis({ data }: { data: Forecast }) {
             </tr>
           </thead>
           <tbody>
-            {data.future.map((r) => (
+            {pagination.rows.map((r) => (
               <tr key={r.date}>
                 <td>{r.date}</td>
                 <td>{format(r.predicted)}</td>
@@ -189,6 +191,7 @@ export default function ForecastAnalysis({ data }: { data: Forecast }) {
           </tbody>
         </table>
       </div>
+      <Pagination {...pagination} />
       <p className="analysis-meta">
         {data.meta.source} · {data.meta.location}. {data.meta.note}
       </p>

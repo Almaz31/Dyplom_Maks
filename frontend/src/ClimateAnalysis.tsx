@@ -1,3 +1,4 @@
+import Pagination, { usePagination } from "./Pagination";
 import { useState } from "react";
 import {
   Bar,
@@ -78,6 +79,7 @@ export function BaselineNote({ data }: { data: Report }) {
 }
 
 export default function ClimateAnalysis({ data }: { data: Report }) {
+  const pagination = usePagination(data.rows, JSON.stringify(data));
   const [heatDetail, setHeatDetail] = useState("");
   const metric = data.filters.metric,
     unit = data.unit;
@@ -323,7 +325,7 @@ export default function ClimateAnalysis({ data }: { data: Report }) {
             </tr>
           </thead>
           <tbody>
-            {data.rows.map((r) => (
+            {pagination.rows.map((r) => (
               <tr key={r.date}>
                 <td>{r.date}</td>
                 <td>{format(r.value)}</td>
@@ -337,6 +339,7 @@ export default function ClimateAnalysis({ data }: { data: Report }) {
           </tbody>
         </table>
       </div>
+      <Pagination {...pagination} />
       <SourceNote data={data} />
     </>
   );

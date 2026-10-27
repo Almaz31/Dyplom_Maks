@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { api, format, type Metric } from "./api";
 import Analytics, { ChartCard } from "./Analytics";
+import TerritorySearch from "./TerritorySearch";
 import Globe, { type SelectedCountry } from "./Globe";
 import { WeatherLegend, weatherColor } from "./weatherPalette";
 import type { GlobeField } from "./globeField";
@@ -253,18 +254,12 @@ export default function WorldWeather({ metric }: { metric: Metric }) {
           </p>
           <label className="world-field">
             Місце
-            <select
-              aria-label="Місто світу"
-              value={chosen === -1 ? "custom" : String(chosen)}
-              onChange={(e) => setPoint(cities[+e.target.value])}
-            >
-              {chosen === -1 && <option value="custom">Вибрана точка</option>}
-              {cities.map((c, i) => (
-                <option value={i} key={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <TerritorySearch
+              label="Місто світу"
+              options={cities.map((c,i)=>({id:String(i),name:c.name}))}
+              value={chosen === -1 ? "" : String(chosen)}
+              onChange={id=>setPoint(cities[+id])}
+            />
           </label>
           <p className="point-country" aria-label="Країна вибраної точки">
             {country?.name}

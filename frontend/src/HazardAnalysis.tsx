@@ -1,3 +1,4 @@
+import Pagination, { usePagination } from "./Pagination";
 import { useState } from "react";
 import {
   Bar,
@@ -42,6 +43,7 @@ export default function HazardAnalysis({
       {},
     ),
   );
+  const pagination = usePagination(sorted, JSON.stringify(data));
   return (
     <>
       <Summary
@@ -144,7 +146,7 @@ export default function HazardAnalysis({
             </tr>
           </thead>
           <tbody>
-            {sorted.map((r) => (
+            {pagination.rows.map((r) => (
               <tr key={r.code}>
                 <th>
                   <button
@@ -166,6 +168,7 @@ export default function HazardAnalysis({
           </tbody>
         </table>
       </div>
+      <Pagination {...pagination} />
       <p className="analysis-meta">
         {data.source}. Ваги до нормування: частота{" "}
         {format(data.weights.frequency)}, тяжкість{" "}

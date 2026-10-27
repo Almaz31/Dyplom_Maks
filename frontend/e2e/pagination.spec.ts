@@ -34,8 +34,21 @@ test('world event pagination keeps map totals and fits mobile',async({page})=>{
  await table.getByRole('button',{name:'Наступна сторінка'}).click();
  await expect(table.getByRole('button',{name:'Сторінка 2',exact:true})).toHaveAttribute('aria-current','page');
  await expect(page.locator('.world-latest strong')).toHaveText(count!);
- await page.getByLabel('Країна світових катастроф').selectOption('USA');
+ await page.getByLabel('Країна світових катастроф').fill('USA');
+ await page.getByRole('listbox').getByRole('option').click();
  await expect(table.getByRole('button',{name:'Сторінка 1',exact:true})).toHaveAttribute('aria-current','page');
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+});
+
+
+test('globe country search focuses one country', async ({page}) => {
+ await page.goto('/?page=disasters');
+ await page.getByRole('button', {name:'\u0421\u0432\u0456\u0442',exact:true}).click();
+ const search=page.locator('.globe-view').getByRole('combobox');
+ await expect(search).toBeEnabled();
+ await search.fill('UKR');
+ await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(1);
+ await search.press('Enter');
+ await expect(page.locator('.globe-view')).toHaveAttribute('data-country','UKR');
 });
