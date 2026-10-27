@@ -42,13 +42,16 @@ test('world event pagination keeps map totals and fits mobile',async({page})=>{
 });
 
 
-test('globe country search focuses one country', async ({page}) => {
+test('world country list includes all countries and merges historical codes',async({page})=>{
  await page.goto('/?page=disasters');
- await page.getByRole('button', {name:'\u0421\u0432\u0456\u0442',exact:true}).click();
- const search=page.locator('.globe-view').getByRole('combobox');
+ await page.getByRole('button',{name:'\u0421\u0432\u0456\u0442',exact:true}).click();
+ await expect(page.locator('.globe-view').getByRole('combobox')).toHaveCount(0);
+ const search=page.locator('.disaster-filters').getByRole('combobox').first();
  await expect(search).toBeEnabled();
- await search.fill('UKR');
- await expect(page.getByRole('listbox').getByRole('option')).toHaveCount(1);
- await search.press('Enter');
- await expect(page.locator('.globe-view')).toHaveAttribute('data-country','UKR');
+ await search.click();
+ expect(await page.getByRole('listbox').getByRole('option').count()).toBeGreaterThan(60);
+ await search.fill('Ger');
+ await expect(page.getByRole('listbox').getByRole('option',{name:'Germany',exact:true})).toHaveCount(1);
+ await search.fill('GFR');
+ await expect(page.getByRole('listbox').getByRole('option',{name:'Germany',exact:true})).toHaveCount(1);
 });

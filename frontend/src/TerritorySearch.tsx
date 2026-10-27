@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
-type Place = { id: string; name: string };
+type Place = { id: string; name: string; searchText?: string };
 const normalize = (text: string) =>
   text
     .toLocaleLowerCase("uk-UA")
@@ -30,12 +30,12 @@ export default function TerritorySearch({
     const tokens = normalize(query).trim().split(/\s+/).filter(Boolean);
     const matched = options.filter((option) =>
       tokens.every((token) =>
-        normalize(option.name + " " + option.id).includes(token),
+        normalize(option.name + " " + option.id + " " + (option.searchText || "")).includes(token),
       ),
     );
     return (
       optional ? [{ id: "", name: "Не вибрано" }, ...matched] : matched
-    ).slice(0, 60);
+    );
   }, [options, query, optional]);
   useEffect(() => {
     if (open)

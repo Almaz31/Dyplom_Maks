@@ -12,7 +12,8 @@ def test_world_disasters_count_events_once_and_filter_country_type_year():
     assert response.status_code == 200
     result = response.json()
     assert len({c['iso'] for c in result['countries']}) == len(result['countries'])
-    assert {c['iso'] for c in result['countries']} == {e['iso'] for e in all_events}
+    assert {c['name'] for c in result['countries']} == {e['country'] for e in all_events}
+    assert len({c['name'] for c in result['countries']}) == len(result['countries'])
     assert result['count'] == len(expected) > 0
     assert result['locations'] == sum(len(e['locations']) for e in expected)
     assert result['series'] == [{'year': 2018, 'count': len(expected)}]
@@ -63,3 +64,15 @@ def test_reference_globe_values_use_the_selected_period():
     single = client.get('/api/world/weather-reference?start=2024-01-01&end=2024-01-01').json()
     tokyo_single = next(p for p in single['points'] if p['name'] == 'Токіо')
     assert tokyo_single['metrics']['temperature'] == data['series'][0]['temperature']
+
+
+def test_country_search_groups_historical_codes_without_losing_events():
+    result = client.get('/api/world/disasters?start=1960&end=2018').json()
+    germany = [c for c in result['countries'] if c['name'] == 'Germany']
+    assert len(germany) == 1
+    assert {'DEU', 'GFR', 'GMY'} <= set(germany[0]['codes'])
+    filtered = client.get('/api/world/disasters', params={
+        'start': 1960, 'end': 2018, 'country': germany[0]['iso']}).json()
+    expected = [e for e in gdis_events() if e['country'] == 'Germany']
+    assert filtered['count'] == len(expected)
+    assert {e['id'] for e in filtered['events']} == {e['id'] for e in expected}

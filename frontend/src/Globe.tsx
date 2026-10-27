@@ -34,7 +34,9 @@ export default function Globe({
   focus,
   onCountryChange,
   field,
+  showCountrySearch = true,
 }: {
+  showCountrySearch?: boolean;
   field?: GlobeField;
   markers?: GlobeMarker[];
   onSelect?: (lat: number, lon: number) => void;
@@ -283,7 +285,7 @@ export default function Globe({
       data-country={selectedCountry?.properties.id || ""}
       data-field={field?.metric || ""}
     >
-      <TerritorySearch
+      {showCountrySearch && <TerritorySearch
         label="Пошук країни на глобусі"
         options={Array.from(new Map((countries?.features || []).map(f => [f.properties.id, {id: f.properties.id, name: f.properties.name}])).values()).sort((a,b)=>a.name.localeCompare(b.name, "uk"))}
         value={selectedCountry?.properties.id || ""}
@@ -297,7 +299,7 @@ export default function Globe({
           setAuto(false);
           onSelect?.(lat, lon);
         }}
-      />
+      />}
       <canvas
         ref={canvas}
         aria-label="3D Земля: перетягніть для обертання, стрілки для повороту, + та − для масштабу"

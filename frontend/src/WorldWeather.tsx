@@ -13,7 +13,9 @@ import {
 import { api, format, type Metric } from "./api";
 import Analytics, { ChartCard } from "./Analytics";
 import TerritorySearch from "./TerritorySearch";
-import Globe, { type SelectedCountry } from "./Globe";
+import Globe from "./Globe";
+import { geoCentroid, geoContains } from "d3-geo";
+import type { FeatureCollection, Polygon, MultiPolygon } from "geojson";
 import { WeatherLegend, weatherColor } from "./weatherPalette";
 import type { GlobeField } from "./globeField";
 export const worldMetrics: Record<Metric, { label: string; unit: string }> = {
@@ -22,16 +24,7 @@ export const worldMetrics: Record<Metric, { label: string; unit: string }> = {
   humidity: { label: "Вологість", unit: "%" },
   wind: { label: "Вітер", unit: "м/с" },
 };
-const cities = [
-  { name: "Київ", lat: 50.45, lon: 30.52 },
-  { name: "Лондон", lat: 51.51, lon: -0.13 },
-  { name: "Нью-Йорк", lat: 40.71, lon: -74.01 },
-  { name: "Токіо", lat: 35.68, lon: 139.69 },
-  { name: "Сідней", lat: -33.87, lon: 151.21 },
-  { name: "Каїр", lat: 30.04, lon: 31.24 },
-  { name: "Ріо-де-Жанейро", lat: -22.91, lon: -43.17 },
-  { name: "Кейптаун", lat: -33.92, lon: 18.42 },
-];
+type Countries = FeatureCollection<Polygon | MultiPolygon, {id:string; name:string; iso2:string}>;
 type Weather = {
   series: ({ date: string } & Record<Metric, number | null>)[];
   latitude: number;
@@ -59,13 +52,32 @@ type WeatherGrid = {
   end: string;
 };
 export default function WorldWeather({ metric }: { metric: Metric }) {
-  const [point, setPoint] = useState(cities[0]),
+  const [point, setPoint] = useState({name:"\u0423\u043a\u0440\u0430\u0457\u043d\u0430",lat:50.45,lon:30.52}),
     [start, setStart] = useState("2024-01-01"),
     [end, setEnd] = useState("2024-12-31"),
     [data, setData] = useState<Weather | null>(null),
     [loading, setLoading] = useState(false),
     [error, setError] = useState("");
-  const [country, setCountry] = useState<SelectedCountry | null>(null);
+  const [countries, setCountries] = useState<Countries | null>(null);
+  const [countriesError, setCountriesError] = useState("");
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/world-countries.geojson", {signal:controller.signal})
+      .then(r => {if(!r.ok) throw Error("Country list unavailable"); return r.json();})
+      .then(setCountries).catch(e => {if(e.name !== "AbortError") setCountriesError(e.message);});
+    return () => controller.abort();
+  }, []);
+  const country = countries?.features.find(f=>geoContains(f,[point.lon,point.lat]));
+  function chooseCountry(id:string) {
+    const feature = countries?.features.find(f=>f.properties.id===id);
+    if(!feature) return;
+    let [lon,lat] = geoCentroid(feature);
+    if(!geoContains(feature,[lon,lat])) {
+      const ring = feature.geometry.type === "Polygon" ? feature.geometry.coordinates[0] : feature.geometry.coordinates[0][0];
+      [lon,lat] = ring[0];
+    }
+    setPoint({name:feature.properties.name,lat,lon});
+  }
   const [reference, setReference] = useState<Reference>({ points: [] });
   const [grid, setGrid] = useState<WeatherGrid | null>(null),
     [gridLoading, setGridLoading] = useState(false),
@@ -164,9 +176,6 @@ export default function WorldWeather({ metric }: { metric: Metric }) {
     }));
   }, [rows, metric]);
   const { label, unit } = worldMetrics[metric];
-  const chosen = cities.findIndex(
-    (c) => c.lat === point.lat && c.lon === point.lon,
-  );
   const scale = useMemo<[number, number]>(
     () =>
       metric === "temperature"
@@ -200,41 +209,13 @@ export default function WorldWeather({ metric }: { metric: Metric }) {
         : undefined,
     [grid, metric, scale],
   );
-  const markers = useMemo(() => {
-    const selectedValue =
-      metric === "precipitation" ? (values.length ? sum : null) : mean;
-    const make = (
-      c: { lat: number; lon: number; name: string },
-      id: string,
-      v: number | null,
-    ) => ({
-      ...c,
-      id,
-      label: c.name,
-      color: v == null ? "#b6bec3" : weatherColor(metric, v, scale),
-      valueLabel:
-        v == null || (id !== String(chosen) && id !== "selected")
-          ? c.name
-          : `${c.name}: ${format(v)} ${unit}`,
-    });
-    return [
-      ...cities.map((c, i) => {
-        const v =
-          i === chosen
-            ? selectedValue
-            : (reference.points.find((p) => p.lat === c.lat && p.lon === c.lon)
-                ?.metrics[metric] ?? null);
-        return make(c, String(i), v);
-      }),
-      ...(chosen === -1 ? [make(point, "selected", selectedValue)] : []),
-    ];
-  }, [point, chosen, reference, metric, scale, mean, sum, values.length, unit]);
-  function select(lat: number, lon: number) {
-    setPoint({
-      name: "Вибрана точка",
-      lat: Math.round(lat * 100) / 100,
-      lon: Math.round(lon * 100) / 100,
-    });
+  const selectedValue = metric === "precipitation" ? (values.length ? sum : null) : mean;
+  const markers = [{...point,id:"selected",label:point.name,
+    color:selectedValue == null ? "#b6bec3" : weatherColor(metric,selectedValue,scale),
+    valueLabel:`${point.name}: ${format(selectedValue)} ${unit}`}];
+  function select(lat:number,lon:number) {
+    const feature = countries?.features.find(f=>geoContains(f,[lon,lat]));
+    if(feature) chooseCountry(feature.properties.id);
   }
   const expected =
     Math.round((Date.parse(end) - Date.parse(start)) / 86400000) + 1;
@@ -248,22 +229,17 @@ export default function WorldWeather({ metric }: { metric: Metric }) {
             <br />
             {point.name}
           </h2>
-          <p>
-            Виберіть місто або точку на глобусі. Дані ERA5 стосуються вибраної
-            точки.
-          </p>
+          <p>Виберіть країну в пошуку або на глобусі. Дані ERA5 для опорної точки країни.</p>
           <label className="world-field">
-            Місце
+            Країна
             <TerritorySearch
-              label="Місто світу"
-              options={cities.map((c,i)=>({id:String(i),name:c.name}))}
-              value={chosen === -1 ? "" : String(chosen)}
-              onChange={id=>setPoint(cities[+id])}
+              label="Країна світової погоди"
+              options={Array.from(new Map((countries?.features||[]).map(f=>[f.properties.id,{id:f.properties.id,name:f.properties.name}])).values()).sort((a,b)=>a.name.localeCompare(b.name,"uk"))}
+              value={country?.properties.id || ""}
+              onChange={chooseCountry}
             />
           </label>
-          <p className="point-country" aria-label="Країна вибраної точки">
-            {country?.name}
-          </p>
+          {countriesError && <p role="alert">{countriesError}</p>}
           <details className="point-coordinates">
             <summary>Розташування точки</summary>
             <p>
@@ -325,14 +301,11 @@ export default function WorldWeather({ metric }: { metric: Metric }) {
           </div>
         </section>
         <Globe
+          showCountrySearch={false}
           field={field}
           markers={markers}
           focus={point}
-          onCountryChange={setCountry}
           onSelect={select}
-          onMarkerSelect={(id) => {
-            if (id !== "selected") setPoint(cities[+id]);
-          }}
         />
       </div>
       <div className="map-legend weather-map-legend">
