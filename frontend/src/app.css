@@ -3548,3 +3548,24 @@ th {
 
 .globe-view > .territory-search { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 5; max-width: 360px; }
 .disaster-filters .territory-search { min-width: 220px; }
+
+/* Interface labels should not become selected while navigating or dragging. */
+h1, h2, h3, h4, h5, h6, button, nav, label, summary, .eyebrow {
+  -webkit-user-select: none;
+  user-select: none;
+}
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.time-series-analysis { min-width: 0; }
+.time-series-analysis > h2 { margin-bottom: 12px; }
+.time-series-analysis > .disaster-filters { margin: 20px 0; align-items: end; }
+.time-series-analysis > .map-host { margin: 16px 0 24px; border-radius: 16px; overflow: hidden; }
+.time-series-analysis > details { margin: 20px 0; padding: 16px; border: 1px solid #dfe5dd; border-radius: 12px; }
+.time-series-analysis details p { margin: 12px 0; line-height: 1.7; overflow-wrap: anywhere; }
+.time-series-analysis pre { max-width: 100%; overflow-x: auto; padding: 16px; background: #f4f6f2; user-select: text; }
+.time-series-analysis .analysis-table { overflow-x: auto; max-height: none; }
+.time-series-analysis .disaster-filters label { min-width: 0; }
+.time-series-analysis .disaster-filters .territory-search { min-width: 0; }

@@ -20,6 +20,7 @@ from .disasters import create_router
 from .world import create_world_router
 from .prediction import create_prediction_router
 from .analytics_api import create_analytics_router
+from .time_series import create_time_series_router
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.environ.get('CLIMATE_DATA_DIR', ROOT / 'data'))
@@ -54,6 +55,7 @@ app.include_router(create_router(connect, DATA))
 app.include_router(create_world_router(DATA))
 app.include_router(create_prediction_router())
 app.include_router(create_analytics_router(connect))
+app.include_router(create_time_series_router(DATA))
 
 class ImportConfig(BaseModel):
     name: str = Field(min_length=1, max_length=160)

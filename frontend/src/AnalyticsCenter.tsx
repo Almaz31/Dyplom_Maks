@@ -21,6 +21,7 @@ import RegionComparison from "./RegionComparison";
 import HazardAnalysis from "./HazardAnalysis";
 import FilterPanel from "./FilterPanel";
 import TerritorySearch from "./TerritorySearch";
+import TimeSeriesAnalysis from "./TimeSeriesAnalysis";
 import { useQueryState, updateQuery } from "./navigation";
 
 const defaults: Filters = {
@@ -90,6 +91,8 @@ export default function AnalyticsCenter({
   regions: Record<string, string>;
   onOpenPrediction: () => void;
 }) {
+  const [analysis, setAnalysis] = useQueryState('analysis', () => new URLSearchParams(location.search).get('analysis') || '');
+  const showTimeSeries = analysis === 'time-series';
   const [sources, setSources] = useState<Source[]>([]),
     [filters, setFilters] = useQueryState<Filters>("a_filters", initial),
     [view, setView] = useQueryState<View>("a_view", initialView);
@@ -211,7 +214,7 @@ export default function AnalyticsCenter({
     setError("");
     setNotice("");
     setBusy(false);
-    if (!sources.length || (!auto && run !== requestKey))
+    if (showTimeSeries || !sources.length || (!auto && run !== requestKey))
       return () => c.abort();
     setBusy(true);
     const timer = setTimeout(() => {
@@ -247,7 +250,7 @@ export default function AnalyticsCenter({
       clearTimeout(timer);
       c.abort();
     };
-  }, [requestKey, run, retry, sources.length]);
+  }, [requestKey, run, retry, sources.length, showTimeSeries]);
   function update<K extends keyof Filters>(key: K, value: Filters[K]) {
     setFilters((old) => ({ ...old, [key]: value }));
   }
@@ -316,13 +319,15 @@ export default function AnalyticsCenter({
         {Object.entries(views).map(([key, label]) => (
           <button
             key={key}
-            aria-current={view === key ? "page" : undefined}
-            onClick={() => setView(key as View)}
+            aria-current={!showTimeSeries && view === key ? "page" : undefined}
+            onClick={() => {setAnalysis(''); setView(key as View);}}
           >
             {label}
           </button>
         ))}
+        <button aria-current={showTimeSeries ? 'page' : undefined} onClick={()=>setAnalysis('time-series')}>Складові ряду</button>
       </nav>
+      {showTimeSeries ? <TimeSeriesAnalysis/> : <>
       {view === "forecast" && (
         <div className="forecast-alternative">
           <p>
@@ -773,6 +778,7 @@ export default function AnalyticsCenter({
       {loaded.hazards && (
         <HazardAnalysis data={loaded.hazards} regions={regions} />
       )}
+      </>}
     </section>
   );
 }
