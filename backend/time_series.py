@@ -134,7 +134,7 @@ def history(region, end, cache, start='1960-01'):
 
 
 def residual_acf(values, max_lag=24):
-    """Scalar sample counterpart of lag covariance (Ayvazyan/Fantazzini §4.1).
+    """Sample residual autocorrelation with a shared variance denominator.
 
     Calendar positions are retained when observations are missing. The same
     full-sample squared-deviation denominator is used for every lag.
